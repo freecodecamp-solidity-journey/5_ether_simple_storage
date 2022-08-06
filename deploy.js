@@ -14,32 +14,22 @@ const main = async () => {
   // contract facotry is an object used to deploy contracts
   const contractFactory = new ethers.ContractFactory(ABI, BIN, wallet);
 
-  console.log("deploying, please wait..............");
-
   const contract = await contractFactory.deploy();
-  // console.log(contract);
+  await contract.deployTransaction.wait(1);
 
-  // console.log("--------------- deployment transaction ---------------");
-  // console.log(contract.deployTransaction);
+  console.log({ address: contract.address });
 
   // wait 1 block to make sure it gets attached to the chain
   // transaction receipt is only available when you wait for block confirmation
   const transactionReceipt = await contract.deployTransaction.wait(1);
-  // console.log("--------------- transaction receipt ---------------");
-  // console.log(transactionReceipt);
 
   let favouriteNum = await contract.retrieve();
-  console.log({ favouriteNum });
 
   favouriteNum = favouriteNum.toString();
 
-  // parse it to string
-  console.log({ favouriteNum });
-
   const tranxResponse = await contract.store("7");
-  const tranxReceipt = await tranxResponse.wait(1);
+  await tranxResponse.wait(1);
   let updatedFavNum = (await contract.retrieve()).toString();
-
   console.log({ updatedFavNum });
 };
 
